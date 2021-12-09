@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -67,6 +68,70 @@ func main() {
 
 	// Part 2
 	{
-		// fmt.Printf("Part 2: %d\n", ints[0])
+		ogs := map[string]bool{}
+		scrubs := map[string]bool{}
+		for _, line := range lines {
+			ogs[line] = true
+			scrubs[line] = true
+		}
+
+		// find OxGen rating
+		for i := 0; len(ogs) > 1; i++ {
+			var freqs [2]int
+			for line := range ogs {
+				switch line[i] {
+				case '0':
+					freqs[0]++
+				case '1':
+					freqs[1]++
+				default:
+					panic("invalid digit")
+				}
+			}
+			var keep byte = '0'
+			if freqs[0] <= freqs[1] {
+				keep = '1'
+			}
+			for line := range ogs {
+				if line[i] != keep {
+					delete(ogs, line)
+				}
+			}
+		}
+
+		// find Scrubs rating
+		for i := 0; len(scrubs) > 1; i++ {
+			var freqs [2]int
+			for line := range scrubs {
+				switch line[i] {
+				case '0':
+					freqs[0]++
+				case '1':
+					freqs[1]++
+				default:
+					panic("invalid digit")
+				}
+			}
+			var keep byte = '0'
+			if freqs[0] > freqs[1] {
+				keep = '1'
+			}
+			for line := range scrubs {
+				if line[i] != keep {
+					delete(scrubs, line)
+				}
+			}
+		}
+		var ogRating, sRating int64
+		var err error
+		for line := range ogs {
+			ogRating, err = strconv.ParseInt(line, 2, 64)
+			catch(err, "invalid OG rating: %s", line)
+		}
+		for line := range scrubs {
+			sRating, err = strconv.ParseInt(line, 2, 64)
+			catch(err, "invalid scrubber rating: %s", line)
+		}
+		fmt.Printf("Part 2: %d\n", ogRating*sRating)
 	}
 }
