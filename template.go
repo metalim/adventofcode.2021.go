@@ -47,8 +47,12 @@ func main() {
 	ints := Ints(Lines(Input()))
 
 	// Part 1
-	fmt.Println(ints[0])
+	{
+		fmt.Printf("Part 1: %d\n", ints[0])
+	}
 
 	// Part 2
-	// fmt.Println(ints[0])
+	{
+		// fmt.Printf("Part 2: %d\n", ints[0])
+	}
 }
