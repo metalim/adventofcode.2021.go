@@ -36,8 +36,23 @@ func main() {
 	ints := Ints(lines)
 
 	// Part 1
-	fmt.Println(ints[0])
+	var increased int
+	for i, v := range ints[1:] {
+		if v > ints[i] {
+			increased++
+		}
+	}
+	fmt.Println(increased)
 
 	// Part 2
-	// fmt.Println(ints[0])
+	increased = 0
+	sum := ints[0] + ints[1] + ints[2]
+	for i, v := range ints[3:] {
+		newSum := sum + v - ints[i]
+		if newSum > sum {
+			increased++
+		}
+		sum = newSum
+	}
+	fmt.Println(increased)
 }
