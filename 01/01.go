@@ -9,7 +9,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func noError(err error, args ...interface{}) {
+func catch(err error, args ...interface{}) {
 	if err == nil {
 		return
 	}
@@ -19,21 +19,32 @@ func noError(err error, args ...interface{}) {
 	panic(err)
 }
 
+func Input() string {
+	file := "input.txt"
+	if len(os.Args) > 1 {
+		file = os.Args[1]
+	}
+	input, err := os.ReadFile(file)
+	catch(err)
+	return strings.TrimSpace(string(input))
+}
+
+func Lines(input string) []string {
+	return strings.Split(input, "\n")
+}
+
 func Ints(lines []string) []int {
 	var err error
 	ints := make([]int, len(lines))
 	for i, line := range lines {
 		ints[i], err = strconv.Atoi(line)
-		noError(err, "line %d", i)
+		catch(err, "line %d", i)
 	}
 	return ints
 }
 
 func main() {
-	input, err := os.ReadFile(os.Args[1])
-	noError(err)
-	lines := strings.Split(strings.TrimSpace(string(input)), "\n")
-	ints := Ints(lines)
+	ints := Ints(Lines(Input()))
 
 	// Part 1
 	var increased int
