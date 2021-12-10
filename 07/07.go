@@ -60,6 +60,7 @@ func main() {
 		sort.Ints(positions)
 		minFuel -= positions[0] * len(ints)
 
+		fmt.Printf("positions: %d, crabs: %d\n", len(positions), len(ints))
 		var split, left int
 		fuel := minFuel
 		for x := positions[0] + 1; x <= positions[len(positions)-1]; x++ {
@@ -79,6 +80,37 @@ func main() {
 
 	// Part 2
 	{
-		// fmt.Printf("Part 2: %d\n", ints[0])
+		minPos := ints[0]
+		maxPos := ints[0]
+
+		var minFuel int
+		for _, pos := range ints {
+			if minPos > pos {
+				minPos = pos
+			}
+			if maxPos < pos {
+				maxPos = pos
+			}
+			minFuel += getFuel(pos)
+		}
+
+		for x := minPos; x <= maxPos; x++ {
+			var fuel int
+			for _, pos := range ints {
+				df := getFuel(pos - x)
+				fuel += df
+			}
+			if minFuel > fuel {
+				minFuel = fuel
+			}
+		}
+		fmt.Printf("Part 2: %d\n", minFuel)
 	}
+}
+
+func getFuel(dist int) int {
+	if dist < 0 {
+		dist = -dist
+	}
+	return dist * (dist + 1) / 2
 }
