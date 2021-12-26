@@ -40,8 +40,8 @@ func main() {
 		var total int
 		for _, line := range lines {
 			parts := strings.Split(line, " | ")
-			digits := strings.Split(parts[1], " ")
-			for _, digit := range digits {
+			display := strings.Split(parts[1], " ")
+			for _, digit := range display {
 				switch len(digit) {
 				case 2, 3, 4, 7: // for digits 1, 7, 4 and 8
 					total++
@@ -72,15 +72,86 @@ func main() {
 		6: {0, 6, 9},
 		7: {8},
 	}
-	segmentDigits := [][]int{
-		{0, 2, 3, 5, 6, 7, 8, 9},
-	}
 
 	// Part 2
 	{
-		_ = lengthDigits
-		_ = segmentDigits
-		_ = digitSegments
-		// fmt.Printf("Part 2: %d\n", ints[0])
+		var sum int
+		for _, line := range lines {
+			// maps code rune to possible segments
+			mappings := map[rune]map[rune]bool{}
+			for _, char := range "abcdefg" {
+				mappings[char] = map[rune]bool{}
+				for _, char2 := range "abcdefg" {
+					mappings[char][char2] = true
+				}
+			}
+
+			/*
+				1. all mappings are possible.
+				2. for each code, z.
+				code(runes) -> digits -> segments
+			*/
+			parts := strings.Split(line, " | ")
+			codes := strings.Split(parts[0], " ")
+			for _, code := range codes {
+				runes := map[rune]bool{}
+				for _, r := range code {
+					runes[r] = true
+				}
+
+				possibleDigits := lengthDigits[len(code)]
+				possibleSegments := map[rune]bool{}
+				for _, digit := range possibleDigits {
+					for _, segment := range digitSegments[digit] {
+						possibleSegments[segment] = true
+					}
+				}
+
+				// remove impossible mappings
+				for char := range runes {
+					for char2 := range mappings[char] {
+						if !possibleSegments[char2] {
+							delete(mappings[char], char2)
+						}
+					}
+				}
+			}
+			for char, mapping := range mappings {
+				charsOut := []string{}
+				for char2 := range mapping {
+					charsOut = append(charsOut, string(char2))
+				}
+				fmt.Printf("%c -> %s\n", char, strings.Join(charsOut, ""))
+			}
+			break
+			sum += 0
+		}
+		fmt.Printf("Part 2: %d\n", sum)
 	}
 }
+
+/*
+g -> a
+
+e -> cf
+a -> cf
+
+b -> bd
+c -> bd
+
+f -> eg
+d -> eg
+
+
+a   e   -> 1
+a   e g -> 7
+abc e   -> 4
+ bc efg -> 5
+ab  efg -> 3
+ab d fg -> 2
+abc efg -> 09
+ bcdefg -> 6
+a cdefg -> 09
+abcdefg -> 8
+
+*/
